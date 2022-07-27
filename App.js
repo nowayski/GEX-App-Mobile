@@ -1,19 +1,11 @@
 import { StatusBar } from "expo-status-bar";
-import {
-  StyleSheet,
-  Text,
-  View,
-  TextInput,
-  Button,
-  TouchableOpacity,
-} from "react-native";
-import { useState } from "react";
+import { StyleSheet, Text, View, ScrollView } from "react-native";
 import MyAppHeaderText from "./components/MyAppHeaderText";
 import ItemSearch from "./components/ItemSearch";
 
 export default function App() {
   return (
-    <View style={styles.container}>
+    <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.topTitle}>
         <MyAppHeaderText textCol="#ffd369">GEX Search</MyAppHeaderText>
       </View>
@@ -29,16 +21,16 @@ export default function App() {
       </Text>
       <ItemSearch />
       <StatusBar style="auto" />
-    </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: "#111114",
-    alignItems: "center",
+    flexGrow: 1,
     justifyContent: "flex-start",
+    alignItems: 'center',
+    backgroundColor: "#111114",
   },
   topTitle: {
     padding: 30,
@@ -54,5 +46,4 @@ const styles = StyleSheet.create({
     marginTop: 20,
     fontWeight: "bold",
   },
-
 });

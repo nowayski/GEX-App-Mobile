@@ -11,7 +11,9 @@ import {
   StyleSheet,
   TouchableOpacity,
   Text,
+  FlatList,
 } from "react-native";
+
 import { useState } from "react";
 import ItemCard from "./ItemCard";
 
@@ -23,9 +25,6 @@ export default function ItemSearch() {
   function populateList(inputListName) {
     const urlList = formatItemUrls(inputListName);
     let inputList = splitThenURL(inputListName);
-    for(var i=0; i< inputList.length; i++){
-        console.log(inputList[i]);
-      }
     checkValidImages(inputList).then((url) => {
       setValidItemText("");
       fetch(urlList, {
@@ -41,6 +40,7 @@ export default function ItemSearch() {
         })
         .then((data) => {
           if (data.success !== false) {
+            setValidItemText("");
             Object.keys(data).forEach((key) => {
               if (!itemList.find((e) => e.itemID === data[key].id)) {
                 setItemList((prevValues) => {
@@ -57,12 +57,10 @@ export default function ItemSearch() {
                 });
               }
             });
-          } else if (data.success === false && textVal !== "") {
+          } else if (data.success === false) {
             setValidItemText("Please enter a valid search.");
           }
         });
-
-      return "";
     });
   }
 
@@ -71,7 +69,7 @@ export default function ItemSearch() {
   };
 
   return (
-    <View>
+    <View style={styles.container}>
       <TextInput
         onChangeText={(text) => setSearchVal(text)}
         value={searchVal}
@@ -91,17 +89,31 @@ export default function ItemSearch() {
           Submit
         </Text>
       </TouchableOpacity>
-
-      {itemList.map((item) => {
-        <View>
-          <ItemCard imgSrc={item.imageUrl} />
-        </View>;
-      })}
+      <Text style={styles.validText}>{validItemText}</Text>
+      <View style={styles.itemGrid}>
+        {itemList.map((item) => (
+          <ItemCard
+            key={item.itemID}
+            imgSrc={item.imageUrl}
+            title={item.name}
+            itemPrice={item.price}
+            itemID={item.itemID}
+            timeStamp={item.timeStamp}
+            accessLabel={"Image of item named " + item.name}
+          />
+        ))}
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flexGrow: 1,
+    justifyContent: "flex-start",
+    alignItems: "center",
+    backgroundColor: "#111114",
+  },
   searchBar: {
     color: "#6d7578",
     margin: 12,
@@ -116,5 +128,18 @@ const styles = StyleSheet.create({
     backgroundColor: "#DDDDDD",
     padding: 10,
     borderRadius: 10,
+    width: 200,
+  },
+  validText: {
+    color: "red",
+    fontWeight: "bold",
+    textAlign: "center",
+    margin: 10,
+  },
+  itemGrid: {
+    flex: 1,
+    justifyContent: "flex-start",
+    alignItems: "center",
+    padding: 10,
   },
 });
